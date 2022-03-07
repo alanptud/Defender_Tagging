@@ -175,12 +175,15 @@ foreach($Device in $Devices)
         #check if device has no tags to begin with
         if($Device.machineTags.Count -eq 0)
         {
+                if($company -ne "Unknown")
+                {
                 write-Output "No Tags Found on device, can apply tag here"
                 write-Output "*** For information purposes: This would end up writing tag $company to $nameofdevice"
                 $Body = "{`"Value`":`"$company`",`"Action`":`"Add`"}"
                 $res = (New-RetryCommand -Command 'Invoke-RestMethod' -Arguments @{Body = $Body; ContentType = "application/json"; Uri = "https://api.securitycenter.windows.com/api/machines/$($Device.id)/tags"; Method = "POST"; Headers = $(Update-MSSecApiToken -creds $o365Creds).headers; ErrorAction = "Stop"})
                 write-output "$($Device.id) ($($Device.computerDnsName)): added $company tag"
                 $Taggedthisrun++
+                }
 
         }
 	}
